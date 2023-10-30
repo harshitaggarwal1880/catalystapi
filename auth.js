@@ -92,10 +92,7 @@ route.post("/login", (req, res) => {
       if (isMatch) {
         const user = { id: userId, name: username };
         const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET);
-        res.cookie("jwt", accessToken, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none", });
+        res.cookie("jwt", accessToken);
         res.send(true);
       } else {
         res.send(false);
@@ -131,9 +128,7 @@ function authenticateToken(req, res, next) {
 
 route.get("/clear", (req, res) => {
   // res.clearCookie("jwt");
-  res.clearCookie("jwt", { path: "/" ,httpOnly: true,
-  secure: true,
-  sameSite: "none",});
+  res.clearCookie("jwt", { path: "/" });
   // res.cookie("jwt", "", {
   //   httpOnly: true,
   //   secure: true,
