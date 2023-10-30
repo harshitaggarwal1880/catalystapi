@@ -131,7 +131,9 @@ function authenticateToken(req, res, next) {
 
 route.get("/clear", (req, res) => {
   // res.clearCookie("jwt");
-  res.clearCookie("jwt", { path: "/" });
+  res.clearCookie("jwt", { path: "/" ,httpOnly: true,
+  secure: true,
+  sameSite: "none",});
   // res.cookie("jwt", "", {
   //   httpOnly: true,
   //   secure: true,
