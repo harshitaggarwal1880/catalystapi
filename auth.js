@@ -100,9 +100,9 @@ route.post("/login", (req, res) => {
         const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET);
         res.cookie("jwt", accessToken, {
           maxAge: 10 * 24 * 60 * 60 * 1000,
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
+          // httpOnly: true,
+          // secure: true,
+          // sameSite: "none",
         });
         // res.cookie("jwt", accessToken, {
         //   //   httpOnly: true,
@@ -147,9 +147,9 @@ route.get("/clear", (req, res) => {
 
   res.cookie("jwt", "h", {
     maxAge: 100,
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    // httpOnly: true,
+    // secure: true,
+    // sameSite: "strict",
   });
   // res.clearCookie("refreshtoken", { path: "/refresh_token" });
   // res.cookie("jwt", "", {
