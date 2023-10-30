@@ -31,13 +31,15 @@ app.use(express.urlencoded({ extended: true }));
 // };
 // app.use(cors(corsOptions));
 
-app.use(
-  "*",
-  cors({
-    origin: process.env.ALLOWED_ORIGIN,
-    credentials: true,
-  })
-);
+// app.use(
+//   "*",
+//   cors({
+//     origin: process.env.ALLOWED_ORIGIN,
+//     credentials: true,
+//   })
+// );
+
+app.use(cors());
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
