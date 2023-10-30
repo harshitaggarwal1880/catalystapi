@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 
 let express = require("express");
 let cookieParser = require("cookie-parser");
@@ -18,9 +18,7 @@ const db = createConnection({
   database: process.env.DB_NAME,
 });
 
-
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
-
 
 function authenticateToken(req, res, next) {
   const token = req.cookies.jwt;
@@ -54,38 +52,46 @@ route.post("/signup", (req, res) => {
 });
 
 route.post("/login", (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const queryPromise = new Promise((resolve, reject) => {
-        db.query("SELECT * FROM users WHERE username = ?;", [username], (err, results) => {
-            if (err) {
-                reject(err);
-            } else {
-                if (results[0]) {
-                    resolve(results);
-                } else {
-                    res.send(false);
-                }
-            }
-        });
-    });
-    const loginPromise = queryPromise
-        .then((results) => {
-            const result = results[0]; // Assuming you want the first row
-            
-            return new Promise((resolve, reject) => {
-                bcrypt.compare(password, result.password, (err, isMatch) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve({ isMatch, userId: result.userId, username: result.username });
-                    }
-                });
+  const username = req.body.username;
+  const password = req.body.password;
+  const queryPromise = new Promise((resolve, reject) => {
+    db.query(
+      "SELECT * FROM users WHERE username = ?;",
+      [username],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results[0]) {
+            resolve(results);
+          } else {
+            res.send(false);
+          }
+        }
+      }
+    );
+  });
+  const loginPromise = queryPromise
+    .then((results) => {
+      const result = results[0]; // Assuming you want the first row
+
+      return new Promise((resolve, reject) => {
+        bcrypt.compare(password, result.password, (err, isMatch) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({
+              isMatch,
+              userId: result.userId,
+              username: result.username,
             });
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).send("Error occurred");
+          }
+        });
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error occurred");
     });
   loginPromise
     .then(({ isMatch, userId, username }) => {
@@ -93,9 +99,11 @@ route.post("/login", (req, res) => {
         const user = { id: userId, name: username };
         const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET);
         res.cookie("jwt", accessToken, {
+          maxAge: 10 * 24 * 60 * 60 * 1000,
           httpOnly: true,
           secure: true,
-          sameSite: "none", });
+          sameSite: "none",
+        });
         // res.cookie("jwt", accessToken, {
         //   //   httpOnly: true,
         //   maxAge: 10 * 24 * 60 * 60 * 1000,
@@ -136,13 +144,13 @@ function authenticateToken(req, res, next) {
 
 route.get("/clear", (req, res) => {
   // res.clearCookie("jwt");
-  
 
-  res.cookie("jwt", "", {
-    expires: new Date(0),
+  res.cookie("jwt", "h", {
+    maxAge: 100,
     httpOnly: true,
     secure: true,
-    sameSite: "strict", });
+    sameSite: "strict",
+  });
   // res.clearCookie("refreshtoken", { path: "/refresh_token" });
   // res.cookie("jwt", "", {
   //   httpOnly: true,
@@ -150,6 +158,5 @@ route.get("/clear", (req, res) => {
   //   sameSite: "none", });
   res.send(true);
 });
-
 
 module.exports = route;
