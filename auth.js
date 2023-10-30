@@ -92,15 +92,15 @@ route.post("/login", (req, res) => {
       if (isMatch) {
         const user = { id: userId, name: username };
         const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET);
-        // res.cookie("jwt", accessToken, {
-        //   httpOnly: true,
-        //   // secure: true,
-        //   sameSite: "strict", });
         res.cookie("jwt", accessToken, {
-          //   httpOnly: true,
-          maxAge: 10 * 24 * 60 * 60 * 1000,
-          //   path: "/refresh_token",
-        });
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict", });
+        // res.cookie("jwt", accessToken, {
+        //   //   httpOnly: true,
+        //   maxAge: 10 * 24 * 60 * 60 * 1000,
+        //   //   path: "/refresh_token",
+        // });
         res.send(true);
       } else {
         res.send(false);
